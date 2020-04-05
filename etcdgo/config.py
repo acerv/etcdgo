@@ -51,15 +51,22 @@ class Config:
 
         self._logger.info("pushing '%s' with name '%s'", filepath, name)
 
+        config_path = "{0}/{1}".format(self._basefolder, name)
+
         # convert  to dict
         data = self._convert(filepath)
 
         # flatten the dictionary
-        config_path = "%s/%s" % (self._basefolder, name)
-        paths = flatten_dict.flatten(data)
+        def slash_reducer(k1, k2):
+            if k1 is None:
+                return k2
+
+            return "{0}/{1}".format(k1, k2)
+
+        paths = flatten_dict.flatten(data, reducer=slash_reducer)
 
         for dirs, value in paths.items():
-            path = config_path + "/" + '/'.join(item for item in dirs)
+            path = "{0}/{1}".format(config_path, dirs)
             self._logger.debug("setting: %s -> %s", path, value)
             self._client.set(path, value)
 
@@ -80,16 +87,20 @@ class Config:
 
         self._logger.info("fetching '%s'", name)
 
-        config_path = "%s/%s" % (self._basefolder, name)
+        config_path = "{0}/{1}".format(self._basefolder, name)
         root = self._client.read(config_path, recursive=True)
         if not root:
             return dict()
+
+        def slash_reducer(flat_key):
+            # first element is empty
+            return flat_key.split("/")[1:]
 
         flat_dict = {
             leaf.key.replace(config_path, ""):
             leaf.value for leaf in root.leaves
         }
-        config = flatten_dict.unflatten(flat_dict, splitter="path")['/']
+        config = flatten_dict.unflatten(flat_dict, splitter=slash_reducer)
 
         self._logger.info("configuration fetched")
 
