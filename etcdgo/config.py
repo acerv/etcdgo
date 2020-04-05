@@ -8,6 +8,7 @@ import json
 import yaml
 import logging
 import etcd
+import flatten_dict
 
 
 class Config:
@@ -38,25 +39,6 @@ class Config:
         """
         Push a format supported file into an etcd database.
 
-        Example:
-            Convert the given file into a dictionary like..
-
-                {
-                    "myname0": {
-                        "config0": "1",
-                        "config1": "2"
-                    },
-                    "myname1": {
-                        "config0": "0"
-                    },
-                }
-
-            and then save it as..
-
-                /config/myname0/config0 = 1
-                /config/myname0/config1 = 2
-                /config/myname1/config0 = 0
-
         Args:
             name     (str): name to associate with file.
             filepath (str): path of the file to be pushed.
@@ -69,22 +51,15 @@ class Config:
 
         self._logger.info("pushing '%s' with name '%s'", filepath, name)
 
-        config_path = "%s/%s" % (self._basefolder, name)
-
-        paths = dict()
-
-        def dict_path(data, path):
-            for key, value in data.items():
-                next_path = path + "/" + key
-                if isinstance(value, dict):
-                    dict_path(value, next_path)
-                elif isinstance(value, str):
-                    paths[next_path] = value
-
+        # convert  to dict
         data = self._convert(filepath)
-        dict_path(data, config_path)
 
-        for path, value in paths.items():
+        # flatten the dictionary
+        config_path = "%s/%s" % (self._basefolder, name)
+        paths = flatten_dict.flatten(data)
+
+        for dirs, value in paths.items():
+            path = config_path + "/" + '/'.join(item for item in dirs)
             self._logger.debug("setting: %s -> %s", path, value)
             self._client.set(path, value)
 
@@ -93,25 +68,6 @@ class Config:
     def pull(self, name):
         """
         Pull a format supported configuration from an etcd database.
-
-        Example:
-            The following DB configuration..
-
-                /config/myname0/config0 = 1
-                /config/myname0/config1 = 2
-                /config/myname1/config0 = 0
-
-            becomes..
-
-                {
-                    "myname0": {
-                        "config0": "1",
-                        "config1": "2"
-                    },
-                    "myname1": {
-                        "config0": "0"
-                    },
-                }
 
         Args:
             name (str): name to associate with file.
@@ -129,28 +85,11 @@ class Config:
         if not root:
             return dict()
 
-        config = dict()
-
-        for leaf in root.leaves:
-            leaf_str = leaf.key.replace(config_path + "/", "")
-
-            self._logger.debug("reading %s", leaf.key)
-            dirs = leaf_str.split("/")
-
-            # avoid empty paths
-            if not dirs or not dirs[0]:
-                continue
-
-            # create the branch
-            pointer = config
-            if len(dirs) > 1:
-                for dirname in dirs[:-1]:
-                    if dirname not in pointer:
-                        pointer[dirname] = dict()
-
-                    pointer = pointer.get(dirname)
-
-            pointer[dirs[-1]] = leaf.value
+        flat_dict = {
+            leaf.key.replace(config_path, ""):
+            leaf.value for leaf in root.leaves
+        }
+        config = flatten_dict.unflatten(flat_dict, splitter="path")['/']
 
         self._logger.info("configuration fetched")
 

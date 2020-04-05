@@ -34,6 +34,7 @@ setup(
     python_version=">3.4,<3.9",
     install_requires=[
         'python-etcd',
-        'pyyaml'
+        'pyyaml',
+        'flatten-dict'
     ],
 )
