@@ -54,7 +54,7 @@ import etcdgo
 
 client = etcd.Client(host='127.0.0.1', port=4003)
 config = etcdgo.get_config(client, "ini", basefolder="/configs")
-...
+config.push("foods", "myconfig.ini")
 ```
 
 Our ``myconfig.ini`` configuration:
@@ -72,10 +72,10 @@ taste = bitter
 Once ``myconfig.ini`` is pushed into etcd, it will be flatten as following:
 
 ```etcd
-/configs/apple/color = 'red'
-/configs/apple/taster = 'sweet'
-/configs/coffee/color = 'black'
-/configs/coffee/taste = 'bitter'
+/configs/foods/apple/color = 'red'
+/configs/foods/apple/taster = 'sweet'
+/configs/foods/coffee/color = 'black'
+/configs/foods/coffee/taste = 'bitter'
 ```
 
 Yaml/JSON configurations are flatten with the same principle. In this case,
@@ -89,7 +89,7 @@ import etcdgo
 
 client = etcd.Client(host='127.0.0.1', port=4003)
 config = etcdgo.get_config(client, "json", basefolder="/configs")
-...
+config.push("foods", "myconfig.json")
 ```
 
 Our ``myconfig.json`` configuration:
@@ -113,9 +113,9 @@ Our ``myconfig.json`` configuration:
 Once ``myconfig.json`` is pushed into etcd, it will be flatten as following:
 
 ```etcd
-/configs/fruits/apple/color = 'red'
-/configs/fruits/apple/taster = 'sweet'
-/configs/fruits/coffee/color = 'black'
-/configs/fruits/coffee/taste = 'bitter'
-/configs/sets = '["fruits", "vegetables"]'
+/configs/foods/fruits/apple/color = 'red'
+/configs/foods/fruits/apple/taster = 'sweet'
+/configs/foods/fruits/coffee/color = 'black'
+/configs/foods/fruits/coffee/taste = 'bitter'
+/configs/foods/sets = '["fruits", "vegetables"]'
 ```
