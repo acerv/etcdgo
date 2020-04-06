@@ -7,10 +7,15 @@ Author:
 """
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='etcdgo',
     version='1.0',
     description='A library to push/pull configurations inside etcd databases',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author='Andrea Cervesato',
     author_email='andrea.cervesato@mailbox.org',
     url='https://github.com/acerv/etcdgo',
