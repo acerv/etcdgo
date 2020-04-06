@@ -4,9 +4,10 @@ Configuration classes definition.
 Author:
     Andrea Cervesato <andrea.cervesato@mailbox.org>
 """
+import logging
+import configparser
 import json
 import yaml
-import logging
 import etcd
 import flatten_dict
 
@@ -128,4 +129,17 @@ class YamlConfig(Config):
         data = dict()
         with open(filepath, 'r') as fdata:
             data = yaml.safe_load(fdata.read())
+        return data
+
+
+class IniConfig(Config):
+    """
+    Push/pull Yaml configurations inside an etcd database.
+    """
+
+    def _convert(self, filepath):
+        parser = configparser.ConfigParser()
+        parser.read(filepath)
+        data = {section: dict(parser.items(section))
+                for section in parser.sections()}
         return data

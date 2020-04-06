@@ -41,6 +41,15 @@ def test_get_config_yaml():
     assert isinstance(obj, etcdgo.config.YamlConfig)
 
 
+def test_get_config_ini():
+    """
+    Test get_config with ini type.
+    """
+    client = etcd.Client()
+    obj = etcdgo.get_config(client, "ini")
+    assert isinstance(obj, etcdgo.config.IniConfig)
+
+
 def test_get_config_basefolder(mocker):
     """
     Test get_config using basefolder.

@@ -7,21 +7,28 @@ Supported filetypes are the following:
 
 * JSON
 * Yaml
+* INI
 
 For example:
 
-    import etcd
-    import etcdgo
+```python
+import etcd
+import etcdgo
 
-    client = etcd.Client(host='127.0.0.1', port=4003)
+client = etcd.Client(host='127.0.0.1', port=4003)
 
-    # push a json configuration inside database
-    config = etcdgo.get_config(client, "json")
-    config.push("myconfig", "myfile.json")
+# push a json configuration inside database
+config = etcdgo.get_config(client, "json")
+config.push("myconfig", "myfile.json")
 
-    # push a yaml configuration inside database
-    config = etcdgo.get_config(client, "yaml")
-    config.push("myconfig", "myfile.yaml")
+# push a yaml configuration inside database
+config = etcdgo.get_config(client, "yaml")
+config.push("myconfig", "myfile.yaml")
 
-    # pull data from etcd database
-    data = config.pull("myconfig")
+# push a ini configuration inside database
+config = etcdgo.get_config(client, "ini")
+config.push("myconfig", "myfile.ini")
+
+# pull data from etcd database
+data = config.pull("myconfig")
+```

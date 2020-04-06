@@ -50,6 +50,8 @@ def get_config(client, config_type, basefolder="/config"):
         obj = etcdgo.config.JsonConfig(client, basefolder=basefolder)
     elif config_type.lower() == "yaml":
         obj = etcdgo.config.YamlConfig(client, basefolder=basefolder)
+    elif config_type.lower() == "ini":
+        obj = etcdgo.config.IniConfig(client, basefolder=basefolder)
     else:
         raise NotImplementedError("'%s' format is not supported" % config_type)
 

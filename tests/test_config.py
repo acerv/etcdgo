@@ -77,19 +77,19 @@ def test_yaml_push_pull(tmpdir, config):
                 birth: 5/8/1980
     """)
     obj = config("yaml")
-    obj.push("config0", str(testfile))
+    obj.push("config_yaml", str(testfile))
 
     if MOCKED:
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/gigi/surname", "burigi")
+            "/config_test/config_yaml/people/gigi/surname", "burigi")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/gigi/birth", "4/7/1916")
+            "/config_test/config_yaml/people/gigi/birth", "4/7/1916")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/osvaldo/surname", "carrube")
+            "/config_test/config_yaml/people/osvaldo/surname", "carrube")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/osvaldo/birth", "5/8/1980")
+            "/config_test/config_yaml/people/osvaldo/birth", "5/8/1980")
     else:
-        data = obj.pull("config0")
+        data = obj.pull("config_yaml")
         assert data == {
             "people": {
                 "gigi": {
@@ -124,19 +124,19 @@ def test_json_push_pull(tmpdir, config):
         }
     """)
     obj = config("json")
-    obj.push("config0", str(testfile))
+    obj.push("config_json", str(testfile))
 
     if MOCKED:
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/gigi/surname", "burigi")
+            "/config_test/config_json/people/gigi/surname", "burigi")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/gigi/birth", "4/7/1916")
+            "/config_test/config_json/people/gigi/birth", "4/7/1916")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/osvaldo/surname", "carrube")
+            "/config_test/config_json/people/osvaldo/surname", "carrube")
         etcd.Client.set.assert_any_call(
-            "/config_test/config0/people/osvaldo/birth", "5/8/1980")
+            "/config_test/config_json/people/osvaldo/birth", "5/8/1980")
     else:
-        data = obj.pull("config0")
+        data = obj.pull("config_json")
         assert data == {
             "people": {
                 "gigi": {
@@ -147,5 +147,45 @@ def test_json_push_pull(tmpdir, config):
                     "surname": "carrube",
                     "birth": "5/8/1980"
                 }
+            }
+        }
+
+
+def test_ini_push_pull(tmpdir, config):
+    """
+    Test IniConfig::push/pull method implementation.
+    """
+    testfile = tmpdir / "config.ini"
+    testfile.write("""
+        [gigi]
+        surname=burigi
+        birth=4/7/1916
+        
+        [osvaldo]
+        surname=carrube
+        birth=5/8/1980
+    """)
+    obj = config("ini")
+    obj.push("config_ini", str(testfile))
+
+    if MOCKED:
+        etcd.Client.set.assert_any_call(
+            "/config_test/config_ini/gigi/surname", "burigi")
+        etcd.Client.set.assert_any_call(
+            "/config_test/config_ini/gigi/birth", "4/7/1916")
+        etcd.Client.set.assert_any_call(
+            "/config_test/config_ini/osvaldo/surname", "carrube")
+        etcd.Client.set.assert_any_call(
+            "/config_test/config_ini/osvaldo/birth", "5/8/1980")
+    else:
+        data = obj.pull("config_ini")
+        assert data == {
+            "gigi": {
+                "surname": "burigi",
+                "birth": "4/7/1916"
+            },
+            "osvaldo": {
+                "surname": "carrube",
+                "birth": "5/8/1980"
             }
         }
