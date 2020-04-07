@@ -8,7 +8,6 @@ import logging
 import configparser
 import json
 import yaml
-import six
 import flatten_dict
 
 
@@ -93,10 +92,10 @@ class Config:
 
         flat_dict = dict()
         for value, metadata in keys:
-            key = six.ensure_str(metadata.key)
+            key = metadata.key.decode('utf-8')
             if key.startswith(config_path):
                 key_done = key.replace(config_path, "", 1)
-                flat_dict[key_done] = six.ensure_str(value)
+                flat_dict[key_done] = value.decode('utf-8')
 
         if not flat_dict:
             return dict()

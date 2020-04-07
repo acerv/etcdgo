@@ -38,7 +38,6 @@ setup(
     packages=["etcdgo"],
     python_version=">3.5,<3.9",
     install_requires=[
-        'six <= 1.14.0',
         'etcd3 <= 0.12.0',
         'pyyaml <= 5.3.1',
         'flatten-dict <= 0.2.0'
