@@ -13,7 +13,7 @@ databases. Supported filetypes are the following:
 Usage example:
 
 ```python
-import etcd
+import etcd3
 import etcdgo
 
 client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
@@ -50,7 +50,7 @@ object and it's the root of our configurations.
 For example:
 
 ```python
-import etcd
+import etcd3
 import etcdgo
 
 client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
@@ -85,7 +85,7 @@ Yaml/JSON configurations are flatten with the same principle. In this case,
 For example:
 
 ```python
-import etcd
+import etcd3
 import etcdgo
 
 client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
