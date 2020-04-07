@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+
+services:
+  - docker
+
+before_install:
+  - docker image pull quay.io/coreos/etcd:latest
+  - docker container run --rm -p 2379:2379 --name etcd quay.io/coreos/etcd:latest /usr/local/bin/etcd --advertise-client-urls http://localhost:2379 --listen-client-urls http://0.0.0.0:2379
+
+script:
+  - tox
