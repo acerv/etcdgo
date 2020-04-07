@@ -3,7 +3,7 @@ Unittests for config module.
 """
 import os
 import pytest
-import etcd
+import etcd3
 import etcdgo
 
 MOCKED = os.environ.get("PYTEST_MOCKED", None)
@@ -15,13 +15,13 @@ def config(mocker):
     Config to test.
     """
     if MOCKED:
-        mocker.patch('etcd.Client.__init__', return_value=None)
-        mocker.patch('etcd.Client.read')
-        mocker.patch('etcd.Client.set')
+        mocker.patch('etcd3.Etcd3Client.__init__', return_value=None)
+        mocker.patch('etcd3.Etcd3Client.get_all')
+        mocker.patch('etcd3.Etcd3Client.put')
 
     def _callback(type):
         obj = etcdgo.get_config(
-            etcd.Client(),
+            etcd3.Etcd3Client(),
             type,
             basefolder="/config_test")
 
@@ -80,13 +80,13 @@ def test_yaml_push_pull(tmpdir, config):
     obj.push("config_yaml", str(testfile))
 
     if MOCKED:
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_yaml/people/gigi/surname", "burigi")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_yaml/people/gigi/birth", "4/7/1916")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_yaml/people/osvaldo/surname", "carrube")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_yaml/people/osvaldo/birth", "5/8/1980")
     else:
         data = obj.pull("config_yaml")
@@ -127,13 +127,13 @@ def test_json_push_pull(tmpdir, config):
     obj.push("config_json", str(testfile))
 
     if MOCKED:
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_json/people/gigi/surname", "burigi")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_json/people/gigi/birth", "4/7/1916")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_json/people/osvaldo/surname", "carrube")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_json/people/osvaldo/birth", "5/8/1980")
     else:
         data = obj.pull("config_json")
@@ -169,13 +169,13 @@ def test_ini_push_pull(tmpdir, config):
     obj.push("config_ini", str(testfile))
 
     if MOCKED:
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_ini/gigi/surname", "burigi")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_ini/gigi/birth", "4/7/1916")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_ini/osvaldo/surname", "carrube")
-        etcd.Client.set.assert_any_call(
+        etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_ini/osvaldo/birth", "5/8/1980")
     else:
         data = obj.pull("config_ini")

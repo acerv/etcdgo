@@ -2,7 +2,7 @@
 Test package functionalities.
 """
 import pytest
-import etcd
+import etcd3
 import etcdgo
 import etcdgo.config
 
@@ -15,11 +15,11 @@ def test_get_config_error():
         etcdgo.get_config(None, "json")
 
     with pytest.raises(ValueError):
-        client = etcd.Client()
+        client = etcd3.Etcd3Client()
         etcdgo.get_config(client, None)
 
     with pytest.raises(NotImplementedError):
-        client = etcd.Client()
+        client = etcd3.Etcd3Client()
         etcdgo.get_config(client, "txt")
 
 
@@ -27,7 +27,7 @@ def test_get_config_json():
     """
     Test get_config with json type.
     """
-    client = etcd.Client()
+    client = etcd3.Etcd3Client()
     obj = etcdgo.get_config(client, "json")
     assert isinstance(obj, etcdgo.config.JsonConfig)
 
@@ -36,7 +36,7 @@ def test_get_config_yaml():
     """
     Test get_config with yaml type.
     """
-    client = etcd.Client()
+    client = etcd3.Etcd3Client()
     obj = etcdgo.get_config(client, "yaml")
     assert isinstance(obj, etcdgo.config.YamlConfig)
 
@@ -45,7 +45,7 @@ def test_get_config_ini():
     """
     Test get_config with ini type.
     """
-    client = etcd.Client()
+    client = etcd3.Etcd3Client()
     obj = etcdgo.get_config(client, "ini")
     assert isinstance(obj, etcdgo.config.IniConfig)
 
@@ -56,7 +56,7 @@ def test_get_config_basefolder(mocker):
     """
     mocker.patch('etcdgo.config.YamlConfig.__init__', return_value=None)
 
-    client = etcd.Client()
+    client = etcd3.Etcd3Client()
     test_basefolder = "/config_test"
     etcdgo.get_config(client, "yaml", basefolder=test_basefolder)
 

@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='etcdgo',
-    version='1.0',
+    version='1.0.1',
     description='A library to push/pull configurations inside etcd databases',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -36,10 +36,11 @@ setup(
         'Topic :: Utilities',
     ],
     packages=["etcdgo"],
-    python_version=">3.4,<3.9",
+    python_version=">3.5,<3.9",
     install_requires=[
-        'python-etcd',
-        'pyyaml',
-        'flatten-dict'
+        'six <= 1.14.0',
+        'etcd3 <= 0.12.0',
+        'pyyaml <= 5.3.1',
+        'flatten-dict <= 0.2.0'
     ],
 )

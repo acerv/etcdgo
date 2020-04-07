@@ -15,7 +15,7 @@ Usage example:
 import etcd
 import etcdgo
 
-client = etcd.Client(host='127.0.0.1', port=4003)
+client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
 
 # push a json configuration inside database
 config = etcdgo.get_config(client, "json")
@@ -52,7 +52,7 @@ For example:
 import etcd
 import etcdgo
 
-client = etcd.Client(host='127.0.0.1', port=4003)
+client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
 config = etcdgo.get_config(client, "ini", basefolder="/configs")
 config.push("foods", "myconfig.ini")
 ```
@@ -87,7 +87,7 @@ For example:
 import etcd
 import etcdgo
 
-client = etcd.Client(host='127.0.0.1', port=4003)
+client = etcd3.Etcd3Client(host='127.0.0.1', port=4003)
 config = etcdgo.get_config(client, "json", basefolder="/configs")
 config.push("foods", "myconfig.json")
 ```

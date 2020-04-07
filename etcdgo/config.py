@@ -8,7 +8,7 @@ import logging
 import configparser
 import json
 import yaml
-import etcd
+import six
 import flatten_dict
 
 
@@ -21,7 +21,7 @@ class Config:
     def __init__(self, client, basefolder="/config"):
         """
         Args:
-            client (etcd.Client): etcd Client instance.
+            client (etcd3.Client): etcd Client instance.
         """
         self._logger = logging.getLogger("converter")
         self._client = client
@@ -69,7 +69,7 @@ class Config:
         for dirs, value in paths.items():
             path = "{0}/{1}".format(config_path, dirs)
             self._logger.debug("setting: %s -> %s", path, value)
-            self._client.set(path, value)
+            self._client.put(path, value)
 
         self._logger.info("configuration pushed")
 
@@ -89,18 +89,25 @@ class Config:
         self._logger.info("fetching '%s'", name)
 
         config_path = "{0}/{1}".format(self._basefolder, name)
-        root = self._client.read(config_path, recursive=True)
-        if not root:
+        keys = self._client.get_all()
+
+        flat_dict = dict()
+        for value, metadata in keys:
+            key = six.ensure_str(metadata.key)
+            if key.startswith(config_path):
+                key_done = key.replace(config_path, "", 1)
+                flat_dict[key_done] = six.ensure_str(value)
+
+        if not flat_dict:
             return dict()
+
+        self._logger.info("config_path = %s", config_path)
+        self._logger.info("flat_dict = %s", flat_dict)
 
         def slash_reducer(flat_key):
             # first element is empty
             return flat_key.split("/")[1:]
 
-        flat_dict = {
-            leaf.key.replace(config_path, ""):
-            leaf.value for leaf in root.leaves
-        }
         config = flatten_dict.unflatten(flat_dict, splitter=slash_reducer)
 
         self._logger.info("configuration fetched")
