@@ -13,4 +13,5 @@ before_install:
 
 script:
   - pip install pytest pytest-mock
+  - pip install -e .
   - pytest -vv -o log_cli=True -o log_level=DEBUG
