@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='etcdgo',
-    version='1.0.1',
+    version='1.1.0',
     description='A library to push/pull configurations inside etcd databases',
     long_description=long_description,
     long_description_content_type="text/markdown",
