@@ -104,7 +104,7 @@ Once ``myconfig.ini`` is pushed into etcd, it will be flatten as following:
 
 ```etcd
 /configs/foods/apple/color = 'red'
-/configs/foods/apple/taster = 'sweet'
+/configs/foods/apple/taste = 'sweet'
 /configs/foods/coffee/color = 'black'
 /configs/foods/coffee/taste = 'bitter'
 ```
@@ -145,7 +145,7 @@ Once ``myconfig.json`` is pushed into etcd, it will be flatten as following:
 
 ```etcd
 /configs/foods/fruits/apple/color = 'red'
-/configs/foods/fruits/apple/taster = 'sweet'
+/configs/foods/fruits/apple/taste = 'sweet'
 /configs/foods/fruits/coffee/color = 'black'
 /configs/foods/fruits/coffee/taste = 'bitter'
 /configs/foods/sets = '["fruits", "vegetables"]'
