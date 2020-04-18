@@ -40,6 +40,36 @@ To install the library:
 pip install etcdgo
 ```
 
+Push/pull via command line
+==========================
+
+etcdgo library contains a tool called ``etcdgo-cli`` which can be used to
+push/pull configurations inside an etcd database.
+
+```bash
+# push ini configuration
+$ etcdgo-cli \
+    --hostname 10.0.1.21 \
+    --port 2379 \
+    --basefile /configs \
+    push pytest0 pytest.ini
+
+# pull configuration
+$ etcdgo-cli \
+    --hostname 10.0.1.21 \
+    --port 2379 \
+    --basefile /configs \
+    pull --output-type=ini pytest0
+[pytest]
+addopts = -vv -s
+log_cli = True
+log_level = DEBUG
+```
+
+``etcdgo-cli`` will automatically recognize the file extension and push it as
+needed, but pull command needs to specify the output type, via ``--output-type``
+option.
+
 How data is stored
 ==================
 
