@@ -35,6 +35,15 @@ class Config:
         """
         raise NotImplementedError()
 
+    def _convert_to_str(self, data):
+        """
+        Convert a dict into a str according with the format.
+
+        Args:
+            data (dict): dictionary to be converted.
+        """
+        raise NotImplementedError()
+
     def push(self, name, filepath):
         """
         Push a format supported file into an etcd database.
@@ -113,6 +122,22 @@ class Config:
 
         return config
 
+    def dump(self, name):
+        """
+        Pull a format supported configuration from an etcd database and
+        convert it to string.
+
+        Args:
+            name (str): name to associate with file.
+
+        Returns:
+            str: configuration as string.
+        """
+        data = self.pull(name)
+        data_str = self._convert_to_str(data)
+
+        return data_str
+
 
 class JsonConfig(Config):
     """
@@ -124,6 +149,10 @@ class JsonConfig(Config):
         with open(filepath, 'r') as fdata:
             data = json.loads(fdata.read())
         return data
+
+    def _convert_to_str(self, data):
+        data_str = json.dumps(data, sort_keys=True, indent=4)
+        return data_str
 
 
 class YamlConfig(Config):
@@ -137,6 +166,10 @@ class YamlConfig(Config):
             data = yaml.safe_load(fdata.read())
         return data
 
+    def _convert_to_str(self, data):
+        data_str = yaml.dump(data)
+        return data_str
+
 
 class IniConfig(Config):
     """
@@ -149,3 +182,15 @@ class IniConfig(Config):
         data = {section: dict(parser.items(section))
                 for section in parser.sections()}
         return data
+
+    def _convert_to_str(self, data):
+        data_list = []
+        for section_name, section in data.items():
+            data_list.append("[%s]" % section_name)
+
+            if section:
+                for key, value in section.items():
+                    data_list.append("%s = %s" % (key, value))
+
+        data_str = "\n".join(data_list)
+        return data_str

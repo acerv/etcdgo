@@ -5,6 +5,9 @@ import os
 import pytest
 import etcd3
 import etcdgo
+import configparser
+import yaml
+import json
 
 MOCKED = os.environ.get("PYTEST_MOCKED", None)
 
@@ -89,8 +92,7 @@ def test_yaml_push_pull(tmpdir, config):
         etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_yaml/people/osvaldo/birth", "5/8/1980")
     else:
-        data = obj.pull("config_yaml")
-        assert data == {
+        expected_data = {
             "people": {
                 "gigi": {
                     "surname": "burigi",
@@ -102,6 +104,12 @@ def test_yaml_push_pull(tmpdir, config):
                 }
             }
         }
+
+        data = obj.pull("config_yaml")
+        assert data == expected_data
+
+        data_str = obj.dump("config_yaml")
+        assert yaml.safe_load(data_str) == expected_data
 
 
 def test_json_push_pull(tmpdir, config):
@@ -136,8 +144,7 @@ def test_json_push_pull(tmpdir, config):
         etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_json/people/osvaldo/birth", "5/8/1980")
     else:
-        data = obj.pull("config_json")
-        assert data == {
+        expected_data = {
             "people": {
                 "gigi": {
                     "surname": "burigi",
@@ -150,6 +157,12 @@ def test_json_push_pull(tmpdir, config):
             }
         }
 
+        data = obj.pull("config_json")
+        assert data == expected_data
+
+        data_str = obj.dump("config_json")
+        assert json.loads(data_str) == expected_data
+
 
 def test_ini_push_pull(tmpdir, config):
     """
@@ -160,7 +173,7 @@ def test_ini_push_pull(tmpdir, config):
         [gigi]
         surname=burigi
         birth=4/7/1916
-        
+
         [osvaldo]
         surname=carrube
         birth=5/8/1980
@@ -178,8 +191,7 @@ def test_ini_push_pull(tmpdir, config):
         etcd3.Etcd3Client.put.assert_any_call(
             "/config_test/config_ini/osvaldo/birth", "5/8/1980")
     else:
-        data = obj.pull("config_ini")
-        assert data == {
+        expected_data = {
             "gigi": {
                 "surname": "burigi",
                 "birth": "4/7/1916"
@@ -189,3 +201,14 @@ def test_ini_push_pull(tmpdir, config):
                 "birth": "5/8/1980"
             }
         }
+
+        data = obj.pull("config_ini")
+        assert data == expected_data
+
+        data_str = obj.dump("config_ini")
+        parser = configparser.ConfigParser()
+        parser.read_string(data_str)
+        config_data = {section: dict(parser.items(section))
+                       for section in parser.sections()}
+
+        assert config_data == expected_data

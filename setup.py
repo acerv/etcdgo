@@ -40,6 +40,13 @@ setup(
     install_requires=[
         'etcd3 <= 0.12.0',
         'pyyaml <= 5.3.1',
-        'flatten-dict <= 0.2.0'
+        'flatten-dict <= 0.2.0',
+        'click <= 7.0',
+        'colorama <= 0.4.3',
     ],
+    entry_points={
+        'console_scripts': [
+            'etcdgo-cli=etcdgo.command:cli',
+        ],
+    },
 )
