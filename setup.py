@@ -12,7 +12,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='etcdgo',
-    version='1.1.0',
+    version='1.2.0',
     description='A library to push/pull configurations inside etcd databases',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -42,7 +42,6 @@ setup(
         'pyyaml <= 5.3.1',
         'flatten-dict <= 0.2.0',
         'click <= 7.0',
-        'colorama <= 0.4.3',
     ],
     entry_points={
         'console_scripts': [
